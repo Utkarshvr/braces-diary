@@ -14,6 +14,8 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
+import { TouchableOpacity } from "react-native";
+import { router } from "expo-router";
 
 const googleIcon = Assets.getAssetByPath("icons.google");
 
@@ -61,55 +63,67 @@ export default function SignUpScreen() {
         Signup
       </Text>
 
-      <View gap-s2>
-        <Animated.View style={animatedStyle}>
-          <TextField
-            ref={emailRef}
-            placeholder="Email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-            enableErrors
-            validate={["required", "email"]}
-            validationMessage={["Email is required", "Invalid email"]}
-            floatingPlaceholder
-            fieldStyle={{ borderBottomWidth: 1, borderColor: "#ccc" }}
-            returnKeyType="next"
-            onSubmitEditing={() => passwordRef.current?.focus()}
-          />
-        </Animated.View>
-        <Animated.View style={animatedStyle}>
-          <TextField
-            ref={passwordRef}
-            placeholder="Password"
-            secureTextEntry
-            autoCapitalize="none"
-            value={password}
-            onChangeText={setPassword}
-            enableErrors
-            validate={[
-              "required",
-              (value) => (value ? value.length >= 6 : false),
-            ]}
-            validationMessage={[
-              "Password is required",
-              "Min 6 characters required",
-            ]}
-            floatingPlaceholder
-            fieldStyle={{ borderBottomWidth: 1, borderColor: "#ccc" }}
-            returnKeyType="done"
-            onSubmitEditing={handleSignup}
-          />
-        </Animated.View>
+      <View>
+        <View gap-s2>
+          <Animated.View style={animatedStyle}>
+            <TextField
+              ref={emailRef}
+              placeholder="Email"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+              enableErrors
+              validate={["required", "email"]}
+              validationMessage={["Email is required", "Invalid email"]}
+              floatingPlaceholder
+              fieldStyle={{ borderBottomWidth: 1, borderColor: "#ccc" }}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
+            />
+          </Animated.View>
+          <Animated.View style={animatedStyle}>
+            <TextField
+              ref={passwordRef}
+              placeholder="Password"
+              secureTextEntry
+              autoCapitalize="none"
+              value={password}
+              onChangeText={setPassword}
+              enableErrors
+              validate={[
+                "required",
+                (value) => (value ? value.length >= 6 : false),
+              ]}
+              validationMessage={[
+                "Password is required",
+                "Min 6 characters required",
+              ]}
+              floatingPlaceholder
+              fieldStyle={{ borderBottomWidth: 1, borderColor: "#ccc" }}
+              returnKeyType="done"
+              onSubmitEditing={handleSignup}
+            />
+          </Animated.View>
 
-        <Button
-          label="Signup"
-          bg-blue50
-          montBold
-          white
-          onPress={handleSignup}
-        />
+          <Button
+            label="Signup"
+            bg-blue50
+            montBold
+            white
+            onPress={handleSignup}
+          />
+        </View>
+        <View row center marginT-8>
+          <Text>Already have an account? </Text>
+          <TouchableOpacity
+            onPress={() => router.navigate("/(auth-screens)/signin")}
+          >
+            <Text blue50 montBold>
+              Signin
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <Button

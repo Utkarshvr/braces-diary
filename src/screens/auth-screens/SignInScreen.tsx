@@ -7,6 +7,7 @@ import {
   Button,
   Assets,
   TextFieldRef,
+  TouchableOpacity,
 } from "react-native-ui-lib";
 
 import Animated, {
@@ -17,6 +18,7 @@ import Animated, {
   SharedValue,
 } from "react-native-reanimated";
 import { supabase } from "@/lib/supabase";
+import { router } from "expo-router";
 import { Alert } from "react-native";
 
 const googleIcon = Assets.getAssetByPath("icons.google");
@@ -87,67 +89,80 @@ export default function SignInScreen() {
         Logo | AppName
       </Text>
 
-      <View gap-s2>
-        <Animated.View style={emailStyle}>
-          <TextField
-            disabled={loading}
-            ref={emailRef}
-            placeholder="Email"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            value={email}
-            onChangeText={setEmail}
-            enableErrors
-            validate={["required", "email"]}
-            validationMessage={["Email is required", "Invalid email"]}
-            floatingPlaceholder
-            fieldStyle={{ borderBottomWidth: 1, borderColor: "#ccc" }}
-            returnKeyType="next"
-            onSubmitEditing={() => passwordRef.current?.focus()}
-          />
-        </Animated.View>
-        <Animated.View style={passwordStyle}>
-          <TextField
-            disabled={loading}
-            ref={passwordRef}
-            placeholder="Password"
-            secureTextEntry={!showPassword}
-            autoCapitalize="none"
-            value={password}
-            onChangeText={setPassword}
-            enableErrors
-            validate={[
-              "required",
-              (value) => (value ? value.length >= 6 : false),
-            ]}
-            validationMessage={[
-              "Password is required",
-              "Min 6 characters required",
-            ]}
-            floatingPlaceholder
-            fieldStyle={{ borderBottomWidth: 1, borderColor: "#ccc" }}
-            returnKeyType="done"
-            onSubmitEditing={handleSignin}
-            trailingAccessory={
-              <View paddingH-8 centerV onTouchEnd={togglePassword}>
-                {showPassword ? (
-                  <EyeOff size={18} color="#999" />
-                ) : (
-                  <Eye size={18} color="#999" />
-                )}
-              </View>
-            }
-          />
-        </Animated.View>
+      <View>
+        <View gap-s2>
+          <Animated.View style={emailStyle}>
+            <TextField
+              disabled={loading}
+              ref={emailRef}
+              placeholder="Email"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+              enableErrors
+              validate={["required", "email"]}
+              validationMessage={["Email is required", "Invalid email"]}
+              floatingPlaceholder
+              fieldStyle={{ borderBottomWidth: 1, borderColor: "#ccc" }}
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.current?.focus()}
+            />
+          </Animated.View>
+          <Animated.View style={passwordStyle}>
+            <TextField
+              disabled={loading}
+              ref={passwordRef}
+              placeholder="Password"
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              value={password}
+              onChangeText={setPassword}
+              enableErrors
+              validate={[
+                "required",
+                (value) => (value ? value.length >= 6 : false),
+              ]}
+              validationMessage={[
+                "Password is required",
+                "Min 6 characters required",
+              ]}
+              floatingPlaceholder
+              fieldStyle={{ borderBottomWidth: 1, borderColor: "#ccc" }}
+              returnKeyType="done"
+              onSubmitEditing={handleSignin}
+              trailingAccessory={
+                <View paddingH-8 centerV onTouchEnd={togglePassword}>
+                  {showPassword ? (
+                    <EyeOff size={18} color="#999" />
+                  ) : (
+                    <Eye size={18} color="#999" />
+                  )}
+                </View>
+              }
+            />
+          </Animated.View>
 
-        <Button
-          disabled={loading}
-          label="Login"
-          bg-blue50
-          montBold
-          white
-          onPress={handleSignin}
-        />
+          <Button
+            disabled={loading}
+            label="Login"
+            bg-blue50
+            montBold
+            white
+            onPress={handleSignin}
+          />
+        </View>
+
+        <View row center marginT-8>
+          <Text>Don't have an account? </Text>
+          <TouchableOpacity
+            onPress={() => router.navigate("/(auth-screens)/signup")}
+          >
+            <Text blue50 montBold>
+              Signup
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <Button

@@ -50,9 +50,9 @@ export default function _layout() {
     else if (!session) router.replace("/(auth-screens)/signin");
   }, [session, isInitializing]);
 
-  if (isInitializing || !fontsLoaded) return <LoadingScreen />;
+  // if (isInitializing || !fontsLoaded) return <LoadingScreen />;
 
-  if (session) <Redirect href={"/(tabs)"} />;
+  // if (session) <Redirect href={"/(tabs)"} />;
 
   return <Slot />;
 }
