@@ -15,13 +15,13 @@ export default function Index() {
     getSession();
 
     supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("auth state changed: ", session);
       setSession(session);
-      console.log("isInit -> FALSE!");
       setIsInitializing(false);
     });
   }, []);
 
-  console.log(session?.expires_in, isInitializing);
+  console.log(session, isInitializing);
 
   useEffect(() => {
     if (isInitializing) return;

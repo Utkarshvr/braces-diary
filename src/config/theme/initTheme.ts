@@ -1,4 +1,4 @@
-import { Colors, Typography } from "react-native-ui-lib";
+import { Assets, Colors, ThemeManager, Typography } from "react-native-ui-lib";
 Colors.setScheme("default");
 
 Typography.loadTypographies({
@@ -24,4 +24,21 @@ Typography.loadTypographies({
   "font-3xl": { fontSize: 30 },
   "font-4xl": { fontSize: 36 },
   "font-5xl": { fontSize: 48 },
+});
+
+ThemeManager.setComponentTheme("Text", {
+  montReg: true,
+});
+
+ThemeManager.setComponentTheme("Button", {
+  montBold: true,
+});
+
+ThemeManager.setComponentTheme("Textfield", {
+  montReg: true,
+});
+
+// ICONS
+Assets.loadAssetsGroup("icons", {
+  google: require("../../assets/icons/google.png"),
 });
