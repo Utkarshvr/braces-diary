@@ -3,10 +3,10 @@ import { supabase } from "@/lib/supabase";
 
 export default function index() {
   return (
-    <View gap-s5 centerV flex bg-$backgroundDefault>
+    <View gap-s5 flex bg-$backgroundDefault>
       <Text $textDefault>index</Text>
 
-      <Button onPress={() => supabase.auth.signOut()}>Signout</Button>
+      <Button onPress={() => supabase.auth.signOut()} label="Signout" />
     </View>
   );
 }
