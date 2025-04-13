@@ -1,3 +1,4 @@
+import { Eye, EyeOff } from "lucide-react-native"; // Or use any icon library you prefer
 import { useRef, useState } from "react";
 import {
   View,
@@ -6,6 +7,7 @@ import {
   Button,
   Assets,
   TextFieldRef,
+  TouchableOpacity,
 } from "react-native-ui-lib";
 
 import Animated, {
@@ -13,29 +15,34 @@ import Animated, {
   useAnimatedStyle,
   withSequence,
   withTiming,
+  SharedValue,
 } from "react-native-reanimated";
-import { TouchableOpacity } from "react-native";
+import { supabase } from "@/lib/supabase";
 import { router } from "expo-router";
+import { Alert } from "react-native";
 
 const googleIcon = Assets.getAssetByPath("icons.google");
 
 export default function SignUpScreen() {
+  const [loading, setLoading] = useState(false);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // Password Visibility Toggle
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePassword = () => setShowPassword((prev) => !prev);
 
   // Refs to TextFields
   const emailRef = useRef<TextFieldRef>(null);
   const passwordRef = useRef<TextFieldRef>(null);
 
   // Animation
+  const emailShake = useSharedValue(0);
+  const passwordShake = useSharedValue(0);
 
-  const shakeX = useSharedValue(0);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: shakeX.value }],
-  }));
-  const triggerShake = () => {
-    shakeX.value = withSequence(
+  const shakeAnim = (sharedVal: SharedValue<number>) => {
+    sharedVal.value = withSequence(
       withTiming(-8, { duration: 50 }),
       withTiming(8, { duration: 50 }),
       withTiming(-6, { duration: 50 }),
@@ -44,29 +51,49 @@ export default function SignUpScreen() {
     );
   };
 
-  const handleSignup = () => {
+  const emailStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: emailShake.value }],
+  }));
+
+  const passwordStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: passwordShake.value }],
+  }));
+
+  const handleSignUp = () => {
     const isEmailValid = emailRef.current?.validate();
     const isPasswordValid = passwordRef.current?.validate();
 
-    if (!isEmailValid || !isPasswordValid) {
-      triggerShake();
-      return;
-    }
+    if (!isEmailValid) shakeAnim(emailShake);
+    if (!isPasswordValid) shakeAnim(passwordShake);
 
-    console.log("Signup with:", { email, password });
-    // Proceed with signup
+    if (isEmailValid && isPasswordValid) {
+      // Sign In Process
+      signUpWithEmail();
+    }
   };
+
+  async function signUpWithEmail() {
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+    if (error) Alert.alert(error.message);
+    setLoading(false);
+  }
 
   return (
     <View flex padding-16 bg-$backgroundDefault gap-s5>
+      {/* TODO: Replace with app_name & logo*/}
       <Text montBold font-2xl $textDefault>
-        Signup
+        Logo | AppName
       </Text>
 
       <View>
         <View gap-s2>
-          <Animated.View style={animatedStyle}>
+          <Animated.View style={emailStyle}>
             <TextField
+              disabled={loading}
               ref={emailRef}
               placeholder="Email"
               keyboardType="email-address"
@@ -82,11 +109,12 @@ export default function SignUpScreen() {
               onSubmitEditing={() => passwordRef.current?.focus()}
             />
           </Animated.View>
-          <Animated.View style={animatedStyle}>
+          <Animated.View style={passwordStyle}>
             <TextField
+              disabled={loading}
               ref={passwordRef}
               placeholder="Password"
-              secureTextEntry
+              secureTextEntry={!showPassword}
               autoCapitalize="none"
               value={password}
               onChangeText={setPassword}
@@ -102,18 +130,29 @@ export default function SignUpScreen() {
               floatingPlaceholder
               fieldStyle={{ borderBottomWidth: 1, borderColor: "#ccc" }}
               returnKeyType="done"
-              onSubmitEditing={handleSignup}
+              onSubmitEditing={handleSignUp}
+              trailingAccessory={
+                <View paddingH-8 centerV onTouchEnd={togglePassword}>
+                  {showPassword ? (
+                    <EyeOff size={18} color="#999" />
+                  ) : (
+                    <Eye size={18} color="#999" />
+                  )}
+                </View>
+              }
             />
           </Animated.View>
 
           <Button
-            label="Signup"
+            disabled={loading}
+            label="Register"
             bg-blue50
             montBold
             white
-            onPress={handleSignup}
+            onPress={handleSignUp}
           />
         </View>
+
         <View row center marginT-8>
           <Text>Already have an account? </Text>
           <TouchableOpacity
@@ -127,13 +166,14 @@ export default function SignUpScreen() {
       </View>
 
       <Button
-        label="Login with Google"
+        label="Continue with Google"
         bg-white
         black
         style={{ marginTop: 20 }}
         iconSource={googleIcon}
         iconStyle={{ width: 24, height: 24 }}
         onPress={() => console.log("Login with Google")}
+        disabled={loading}
       />
     </View>
   );

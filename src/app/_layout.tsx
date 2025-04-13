@@ -45,8 +45,8 @@ export default function _layout() {
   useEffect(() => {
     if (isInitializing) return;
 
-    const inAuthGroup = segments[0] === "(auth-screens)";
-    if (session && inAuthGroup) router.replace("/(tabs)");
+    const inTabsGroup = segments[0] === "(tabs)";
+    if (session && !inTabsGroup) router.replace("/(tabs)");
     else if (!session) router.replace("/(auth-screens)/signin");
   }, [session, isInitializing]);
 

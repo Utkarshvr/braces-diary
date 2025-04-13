@@ -166,7 +166,7 @@ export default function SignInScreen() {
       </View>
 
       <Button
-        label="Login with Google"
+        label="Continue with Google"
         bg-white
         black
         style={{ marginTop: 20 }}

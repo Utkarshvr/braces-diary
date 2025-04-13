@@ -1,10 +1,10 @@
 import LayoutTemplate from "@/components/layout/LayoutTemplate";
-import { Tabs } from "expo-router";
+import TabNavigator from "@/components/navigation/TabNavigator";
 
 export default function _layout() {
   return (
     <LayoutTemplate>
-      <Tabs screenOptions={{ headerShown: false }} />
+      <TabNavigator />
     </LayoutTemplate>
   );
 }
