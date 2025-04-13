@@ -1,30 +1,26 @@
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { SafeAreaView } from "react-native-safe-area-context";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 
-import { Colors } from "react-native-ui-lib";
-Colors.setScheme("default");
+import LoadingScreen from "@/screens/LoadingScreen";
 
-export default function RootLayout() {
-  return (
-    <SafeAreaView
-      style={[
-        {
-          flex: 1,
-          height: "100%",
-          width: "100%",
-          backgroundColor: Colors.$backgroundDefault,
-        },
-      ]}
-    >
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: Colors.$backgroundDefault },
-          headerTintColor: Colors.$textDefault,
-        }}
-      />
+// Initialize theme
+import "@/config/theme/initTheme";
+import RootLayout from "@/components/layout/RootLayout";
+import { useFonts } from "@expo-google-fonts/montserrat";
+import fonts from "@/config/theme/fonts";
 
-      <StatusBar style="auto" />
-    </SafeAreaView>
-  );
+SplashScreen.preventAutoHideAsync();
+
+export default function _layout() {
+  const [fontsLoaded] = useFonts(fonts);
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) return <LoadingScreen />;
+
+  return <RootLayout />;
 }

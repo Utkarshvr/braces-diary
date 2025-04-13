@@ -1,12 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import SignInScreen from "@/screens/auth-screens/SignInScreen";
 
 export default function signin() {
-  return (
-    <View>
-      <Text>signin</Text>
-    </View>
-  )
+  return <SignInScreen />;
 }
-
-const styles = StyleSheet.create({})
