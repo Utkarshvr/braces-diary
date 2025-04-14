@@ -14,8 +14,8 @@ export default function AuthHandler() {
     getSession();
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      console.log("auth state changed: ", session);
-      // setSession(session);
+      // console.log("auth state changed: ", session);
+      setSession(session);
       setIsInitializing(false);
     });
   }, []);
