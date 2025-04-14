@@ -15,7 +15,7 @@ export default function AuthHandler() {
 
     supabase.auth.onAuthStateChange((_event, session) => {
       console.log("auth state changed: ", session);
-      setSession(session);
+      // setSession(session);
       setIsInitializing(false);
     });
   }, []);
@@ -26,7 +26,7 @@ export default function AuthHandler() {
     if (isInitializing) return;
 
     const inTabsGroup = segments[0] === "(tabs)";
-    if (session && !inTabsGroup) router.replace("/(tabs)");
+    if (session && !inTabsGroup) router.replace("/(tabs)/home");
     else if (!session) router.replace("/(auth-screens)/signin");
   }, [session, isInitializing]);
 
