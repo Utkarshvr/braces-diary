@@ -20,7 +20,7 @@ export default function AuthHandler() {
     });
   }, []);
 
-  console.log(session, isInitializing);
+  // console.log(session, isInitializing);
 
   useEffect(() => {
     if (isInitializing) return;

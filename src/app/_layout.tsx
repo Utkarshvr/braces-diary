@@ -7,6 +7,7 @@ import { useFonts } from "@expo-google-fonts/montserrat";
 import fonts from "@/config/theme/fonts";
 import { Slot } from "expo-router";
 import AuthHandler from "@/components/handlers/AuthHandler";
+import ThemeHandler from "@/components/handlers/ThemeHandler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -23,6 +24,7 @@ export default function _layout() {
     <>
       <Slot />
       <AuthHandler />
+      <ThemeHandler />
     </>
   );
 }
