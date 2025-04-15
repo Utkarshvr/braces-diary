@@ -6,9 +6,9 @@ export default function ClinicCard() {
   const doctor_name = "Emad Sir";
 
   return (
-    <View gap-s4 bg-$backgroundElevated padding-12 style={{ borderRadius: 12 }}>
+    <View gap-s2 bg-$backgroundElevated padding-12 style={{ borderRadius: 12 }}>
       <View>
-        <Text $textNeutralHeavy montSemiBold font-xl>
+        <Text $textNeutral montSemiBold font-lg>
           {clinic_name}
         </Text>
         {clinic_note && (
@@ -19,7 +19,7 @@ export default function ClinicCard() {
       </View>
 
       <View gap-s1>
-        <Text $textNeutral montMedium font-md>
+        <Text $textGeneral montMedium font-md>
           Dr. {doctor_name}
         </Text>
 
