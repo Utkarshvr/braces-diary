@@ -1,4 +1,4 @@
-import { View, Colors } from "react-native-ui-lib";
+import { Colors, View } from "react-native-ui-lib";
 import { useAppearanceSchemeStore } from "@/store/AppearanceSchemeStore";
 import MyCalendar from "./MyCalendar";
 
@@ -8,7 +8,7 @@ export default function CalendarView() {
   console.log("Rerendered: ", colorScheme);
 
   return (
-    <View>
+    <View absT style={{ width: "100%" }}>
       <MyCalendar
         hideExtraDays
         theme={{
@@ -30,6 +30,7 @@ export default function CalendarView() {
           todayButtonFontFamily: "montRegular",
           textDayHeaderFontFamily: "montRegular",
         }}
+        style={{ height: "50%" }}
       />
     </View>
   );

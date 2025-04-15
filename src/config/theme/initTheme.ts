@@ -28,6 +28,10 @@ Typography.loadTypographies({
 
 ThemeManager.setComponentTheme("Text", {
   montReg: true,
+  $textDefault: true,
+});
+ThemeManager.setComponentTheme("View", {
+  $backgroundDefault: true,
 });
 
 ThemeManager.setComponentTheme("Button", {
