@@ -1,12 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import CalendarScreen from "@/screens/tabs/CalendarScreen";
 
 export default function calendar() {
-  return (
-    <View>
-      <Text>calendar</Text>
-    </View>
-  )
+  return <CalendarScreen />;
 }
-
-const styles = StyleSheet.create({})
