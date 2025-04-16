@@ -1,5 +1,6 @@
 import { NavLinkProp } from "@/constants/profile-settings/profile-settings-constants";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { Colors, Text, TouchableOpacity, View } from "react-native-ui-lib";
 
 export default function NavLink({
@@ -24,7 +25,7 @@ export default function NavLink({
         justifyContent: "space-between",
       }}
       // TODO:
-      // onTouchEnd={() => router.push(link)}
+      onPress={() => router.push(link)}
     >
       <View gap-s2 row centerV>
         {icon}
