@@ -1,6 +1,17 @@
-import { Colors, TextField, View } from "react-native-ui-lib";
+import {
+  Button,
+  Colors,
+  Dialog,
+  KeyboardAwareScrollView,
+  PanningProvider,
+  Text,
+  TextField,
+  TouchableOpacity,
+  View,
+} from "react-native-ui-lib";
 import { useState } from "react";
-import { ViewStyle } from "react-native";
+import { KeyboardTypeOptions, ViewStyle } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 type Props = {};
 
@@ -13,12 +24,19 @@ const fieldStyle: ViewStyle = {
 };
 
 export default function ClinicInfoForm({}: Props) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    doctorName: string;
+    clinicName: string;
+    address: string;
+    emails: string[];
+    phones: { name: string; number: string; key: string }[];
+    notes: string;
+  }>({
     doctorName: "",
     clinicName: "",
     address: "",
     emails: [""],
-    phones: [""],
+    phones: [],
     notes: "",
   });
 
@@ -26,32 +44,37 @@ export default function ClinicInfoForm({}: Props) {
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
-  const updateArrayField = (
-    key: "emails" | "phones",
-    value: string,
-    index: number
+  const addField = (
+    key: "phones",
+    val: { name: string; number: string; key: string }
   ) => {
-    const updated = [...formData[key]];
-    updated[index] = value;
-    setFormData((prev) => ({ ...prev, [key]: updated }));
+    setFormData((prev) => ({
+      ...prev,
+      [key]: [val, ...prev[key]],
+    }));
   };
 
-  const addField = (key: "emails" | "phones") => {
-    setFormData((prev) => ({ ...prev, [key]: [...prev[key], ""] }));
-  };
-
-  const inputFields = [
+  const inputFields: {
+    key: string;
+    placeholder: string;
+    keyboardType: KeyboardTypeOptions;
+    autoCapitalize?: "words" | "sentences" | "none" | "characters" | undefined;
+    multiline: boolean;
+    numberOfLines?: number;
+  }[] = [
     {
       key: "doctorName",
       placeholder: "Doctor Name",
       keyboardType: "default",
       autoCapitalize: "words" as const,
+      multiline: false,
     },
     {
       key: "clinicName",
       placeholder: "Clinic Name",
       keyboardType: "default",
       autoCapitalize: "words" as const,
+      multiline: false,
     },
     {
       key: "address",
@@ -71,8 +94,54 @@ export default function ClinicInfoForm({}: Props) {
     },
   ];
 
+  const [dialogState, setDialogState] = useState<{
+    isOpen: boolean;
+    type: "add" | "edit";
+    phone_state: { name: string; number: string; key: string };
+  }>({
+    isOpen: false,
+    type: "add",
+
+    phone_state: { name: "", number: "", key: "" },
+  });
+
+  function openPhoneDialog() {
+    setDialogState((prev) => ({ ...prev, isOpen: !prev.isOpen }));
+  }
+
+  const dialogTextFieldsArray: {
+    key: "name" | "number";
+    placeholder: string;
+    keyboardType: KeyboardTypeOptions;
+    autoCapitalize?: "words" | "sentences" | "none" | "characters" | undefined;
+  }[] = [
+    {
+      key: "name",
+      placeholder: "Name",
+      keyboardType: "default",
+      autoCapitalize: "words",
+    },
+    {
+      key: "number",
+      placeholder: "Number",
+      keyboardType: "number-pad",
+    },
+  ];
+
+  function updatePhoneNumber(val: {
+    name: string;
+    number: string;
+    key: string;
+  }) {
+    const newPhones = formData.phones.map((p) => {
+      if (p.key === val.key) return val;
+      else return p;
+    });
+    setFormData((prev) => ({ ...prev, phones: newPhones }));
+  }
+
   return (
-    <View gap-s4>
+    <KeyboardAwareScrollView>
       {inputFields.map((field) => (
         <TextField
           key={field.key}
@@ -92,53 +161,133 @@ export default function ClinicInfoForm({}: Props) {
         />
       ))}
 
-      {formData.emails.map((email, index) => (
-        <TextField
-          key={`email-${index}`}
-          placeholder={`Email ${index + 1}`}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          floatingPlaceholder
-          value={email}
-          onChangeText={(val) => updateArrayField("emails", val, index)}
-          fieldStyle={fieldStyle}
-        />
-      ))}
+      <View marginT-16>
+        <Text montSemiBold $textNeutral>
+          Phone Numbers
+        </Text>
+        {formData.phones.map((phone, index) => (
+          <View
+            row
+            gap-s1
+            style={{ justifyContent: "space-between" }}
+            key={phone.key}
+            center
+          >
+            <Text montSemiBold $textNeutralHeavy>
+              {phone.name}
+            </Text>
+            <TouchableOpacity
+              style={{ flex: 0.8 }}
+              onPress={() => {
+                setDialogState((prev) => ({
+                  isOpen: !prev.isOpen,
+                  type: "edit",
+                  phone_state: phone,
+                }));
+              }}
+            >
+              <TextField
+                key={`phone-${index}`}
+                placeholder={`Phone ${index + 1}`}
+                keyboardType="phone-pad"
+                autoCapitalize="none"
+                floatingPlaceholder
+                editable={false}
+                value={phone.number}
+                fieldStyle={fieldStyle}
+              />
+            </TouchableOpacity>
+          </View>
+        ))}
 
-      <TextField
-        placeholder="Add Another Email"
-        editable={false}
-        onPressIn={() => addField("emails")}
-        fieldStyle={{
-          borderBottomWidth: 1,
-          borderColor: "#ccc",
-          opacity: 0.5,
+        <View marginT-12 center>
+          <Button
+            iconSource={() => (
+              <Ionicons name="add" color={Colors.$iconDefault} size={18} />
+            )}
+            size="xSmall"
+            style={{ width: 44, height: 44 }}
+            backgroundColor={Colors.$backgroundNeutralMedium}
+            center
+            // onPress={() => addField("phones")}
+            onPress={openPhoneDialog}
+          />
+        </View>
+      </View>
+
+      <Dialog
+        overlayBackgroundColor={"rgba(0,0,0,0.7)"}
+        useSafeArea
+        top
+        center
+        bottom
+        panDirection={PanningProvider.Directions.DOWN}
+        containerStyle={{
+          backgroundColor: Colors.$backgroundDefault,
+          borderRadius: 12,
         }}
-      />
+        visible={dialogState.isOpen}
+        onDismiss={() => console.log("dismissed")}
+        pannableHeaderProps={"HAHAHAHA"}
+        ignoreBackgroundPress
+      >
+        <View padding-16>
+          <Text montBold>
+            {dialogState.type === "add" ? "Add Phone" : "Update Phone"}
+          </Text>
 
-      {formData.phones.map((phone, index) => (
-        <TextField
-          key={`phone-${index}`}
-          placeholder={`Phone ${index + 1}`}
-          keyboardType="phone-pad"
-          autoCapitalize="none"
-          floatingPlaceholder
-          value={phone}
-          onChangeText={(val) => updateArrayField("phones", val, index)}
-          fieldStyle={fieldStyle}
-        />
-      ))}
+          {dialogTextFieldsArray.map((field) => (
+            <TextField
+              key={field.key}
+              placeholder={field.placeholder}
+              keyboardType={field.keyboardType}
+              autoCapitalize={field.autoCapitalize}
+              floatingPlaceholder
+              value={
+                dialogState.phone_state[
+                  field.key as keyof typeof dialogState.phone_state
+                ] as string
+              }
+              onChangeText={(val) => {
+                setDialogState((prev) => ({
+                  ...prev,
+                  phone_state: {
+                    ...dialogState.phone_state,
+                    [field.key as keyof typeof dialogState.phone_state]: val,
+                  },
+                }));
+              }}
+              fieldStyle={fieldStyle}
+              floatingPlaceholderStyle={{
+                top:
+                  dialogState.phone_state[
+                    field.key as keyof typeof dialogState.phone_state
+                  ].length > 0
+                    ? -10
+                    : 0,
+              }}
+            />
+          ))}
 
-      <TextField
-        placeholder="Add Another Phone"
-        editable={false}
-        onPressIn={() => addField("phones")}
-        fieldStyle={{
-          borderBottomWidth: 1,
-          borderColor: "#ccc",
-          opacity: 0.5,
-        }}
-      />
-    </View>
+          <Button
+            marginT-16
+            label={"Done"}
+            backgroundColor={Colors.$backgroundNeutralMedium}
+            color={Colors.$textNeutral}
+            size="medium"
+            onPress={() => {
+              dialogState.type === "add"
+                ? addField("phones", {
+                    ...dialogState.phone_state,
+                    key: Math.random().toString(),
+                  })
+                : updatePhoneNumber(dialogState.phone_state);
+
+              setDialogState((prev) => ({ ...prev, isOpen: false }));
+            }}
+          />
+        </View>
+      </Dialog>
+    </KeyboardAwareScrollView>
   );
 }
