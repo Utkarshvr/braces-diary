@@ -1,12 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import ProfileSettingsScreen from "@/screens/tabs/ProfileSettingsScreen";
 
 export default function ProfileSettings() {
-  return (
-    <View>
-      <Text>ProfileSettings</Text>
-    </View>
-  )
+  return <ProfileSettingsScreen />;
 }
-
-const styles = StyleSheet.create({})

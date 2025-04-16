@@ -26,6 +26,7 @@ export default function HomeScreen() {
       <NavLink
         icon={<Ionicons name="home" color={Colors.$iconDefault} size={18} />}
         label="Braces Timeline"
+        // TODO: Change link
         link="/timeline"
       />
 
