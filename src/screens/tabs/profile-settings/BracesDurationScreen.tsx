@@ -6,6 +6,7 @@ import { useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import BackBtn from "@/components/common/BackBtn";
+import ScreenHeader from "@/components/common/ScreenHeader";
 
 export default function BracesDurationScreen() {
   const [duration, setDuration] = useState({
@@ -43,12 +44,7 @@ export default function BracesDurationScreen() {
 
   return (
     <View flex bg-$backgroundDefault padding-16>
-      <View row gap-s2 centerV>
-        {router.canGoBack() && <BackBtn />}
-        <Text $textNeutral montBold font-xl>
-          Braces Duration
-        </Text>
-      </View>
+      <ScreenHeader label="Braces Duration" />
 
       <View marginT-8 row style={{ justifyContent: "space-between" }} center>
         <View>

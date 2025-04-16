@@ -34,7 +34,7 @@ export const navLinks: NavLinkProp[] = [
   },
   {
     label: "Doctor & Clinic Info",
-    link: "/(tabs)/profile-settings/braces-duration",
+    link: "/(tabs)/profile-settings/clinic-info",
     type: "secondary",
     icon: (
       <FontAwesome5
