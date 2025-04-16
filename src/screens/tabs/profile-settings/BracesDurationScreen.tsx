@@ -4,6 +4,8 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { TouchableOpacity } from "react-native";
+import { router } from "expo-router";
+import BackBtn from "@/components/common/BackBtn";
 
 export default function BracesDurationScreen() {
   const [duration, setDuration] = useState({
@@ -39,13 +41,14 @@ export default function BracesDurationScreen() {
     // }
   }
 
-  console.log(datePickerState.isOpen);
-
   return (
     <View flex bg-$backgroundDefault padding-16>
-      <Text $textNeutral montBold font-xl>
-        Braces Duration
-      </Text>
+      <View row gap-s2 centerV>
+        {router.canGoBack() && <BackBtn />}
+        <Text $textNeutral montBold font-xl>
+          Braces Duration
+        </Text>
+      </View>
 
       <View marginT-8 row style={{ justifyContent: "space-between" }} center>
         <View>
