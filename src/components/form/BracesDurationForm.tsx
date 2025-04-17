@@ -7,6 +7,7 @@ import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { useSessionStore } from "@/store/SessionStore";
 import { supabase } from "@/lib/supabase";
 import { UserInfoType } from "@/types/supabase-table-types";
+import { formatToDateOnlyString } from "@/utils/utils";
 
 type Props = {};
 
@@ -49,11 +50,17 @@ export default function BracesDurationForm({}: Props) {
   const { userInfo, setUserInfo } = useSessionStore();
   useEffect(() => {
     if (!userInfo) return;
-    console.log(today, today.toDateString(), twoYearsLater.toDateString());
+    // console.log(today, today.toDateString(), twoYearsLater.toDateString());
+
+    console.log(userInfo);
 
     setDuration({
-      start: userInfo.braces_start_date || today.toDateString(),
-      end: userInfo.braces_end_date || twoYearsLater.toDateString(),
+      start:
+        new Date(userInfo.braces_start_date).toDateString() ||
+        today.toDateString(),
+      end:
+        new Date(userInfo.braces_end_date).toDateString() ||
+        twoYearsLater.toDateString(),
     });
   }, [userInfo]);
 
@@ -61,16 +68,11 @@ export default function BracesDurationForm({}: Props) {
 
   async function saveInfo() {
     setIsSavingInfo(true);
-    const updatedDuration = {
-      braces_start_date: new Date(duration.start),
-      braces_end_date: new Date(duration.end),
-    };
-    console.log({
-      updatedDuration,
 
-      start: duration.start,
-      end: duration.end,
-    });
+    const updatedDuration = {
+      braces_start_date: formatToDateOnlyString(duration.start), // stays 2025-04-05
+      braces_end_date: formatToDateOnlyString(duration.end), // stays 2027-04-18
+    };
 
     const { error } = await supabase
       .from("users")
