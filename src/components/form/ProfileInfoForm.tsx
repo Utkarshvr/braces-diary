@@ -8,7 +8,7 @@ import {
 import { useSessionStore } from "@/store/SessionStore";
 import { supabase } from "@/lib/supabase";
 import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { UserInfoType } from "@/types/supabase-table-types";
 
 type Props = { isOnBoarding?: boolean };
 
@@ -71,12 +71,16 @@ export default function ProfileInfoForm({ isOnBoarding = false }: Props) {
         },
       ];
 
-  const { session } = useSessionStore();
+  const { userInfo, setUserInfo } = useSessionStore();
 
   useEffect(() => {
-    if (!session?.user) return;
-    setFormData((prev) => ({ ...prev, email: session.user.email || "" }));
-  }, [session]);
+    if (!userInfo) return;
+    setFormData((prev) => ({
+      ...prev,
+      email: userInfo.email || "",
+      name: userInfo.name,
+    }));
+  }, [userInfo]);
 
   const [isSavingInfo, setIsSavingInfo] = useState(false);
 
@@ -84,12 +88,16 @@ export default function ProfileInfoForm({ isOnBoarding = false }: Props) {
     if (!formData.name) return;
     setIsSavingInfo(true);
 
+    const { status, error } = await supabase.from("users").upsert({
+      id: userInfo?.id,
+      name: formData.name,
+    });
+
+    if (status !== 200 && status !== 201) return console.log(error);
+
+    setUserInfo({ ...userInfo, name: formData.name } as UserInfoType);
+
     if (isOnBoarding) {
-      const { status, error } = await supabase.from("users").upsert({
-        id: session?.user.id,
-        name: formData.name,
-      });
-      if (status !== 200 && status !== 201) return console.log(error);
       // Move back
       router.push("/(tabs)/home");
     }

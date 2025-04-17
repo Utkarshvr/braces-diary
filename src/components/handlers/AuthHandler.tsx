@@ -45,7 +45,7 @@ export default function AuthHandler() {
         // If user info is present
         if (data) {
           console.log({ data });
-          setUserInfo(data);
+          setUserInfo({ ...data, email: session.user.email });
 
           // Check whether it has "name"
           if (data.name) {

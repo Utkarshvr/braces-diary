@@ -1,6 +1,7 @@
 export interface UserInfoType {
   id: string;
   name: string;
+  email: string;
   braces_start_date: string;
   braces_end_date: string;
 

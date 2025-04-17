@@ -16,7 +16,7 @@ export default function ProfileInfoScreen({ isOnBoarding = false }: Props) {
 
       {/* Profile Info Form */}
       <KeyboardAwareScrollView>
-        <ProfileInfoForm isOnBoarding />
+        <ProfileInfoForm isOnBoarding={isOnBoarding} />
       </KeyboardAwareScrollView>
     </View>
   );
