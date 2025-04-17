@@ -1,9 +1,11 @@
+import { useSessionStore } from "@/store/SessionStore";
 import { Button, Colors, Text, View } from "react-native-ui-lib";
 
 export default function ClinicCard() {
-  const clinic_name = "Dentwin Clinic";
-  const clinic_note = "Very good clinic, I love it!";
-  const doctor_name = "Emad Sir";
+  const { userInfo } = useSessionStore();
+  const clinic_name = userInfo?.clinic_info?.clinic_name;
+  const clinic_note = userInfo?.clinic_info?.notes;
+  const doctor_name = userInfo?.clinic_info?.doctor_name;
 
   return (
     <View gap-s2 bg-$backgroundElevated padding-12 style={{ borderRadius: 12 }}>

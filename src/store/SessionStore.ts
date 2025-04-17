@@ -37,15 +37,23 @@ export const useSessionStore = create<SessionState>()((set) => ({
         .select("*")
         .eq("user_id", session?.user.id)
         .single();
-      console.log({ clinic_info_data });
 
       if (clinic_info_data) {
-        set((state) => ({
-          userInfo: {
-            ...state.userInfo,
-            clinic_info: clinic_info_data,
-          } as UserInfoType,
-        }));
+        set((state) => {
+          console.log({
+            clinic_info_data,
+            NEW_USER_INFO: {
+              ...state.userInfo,
+              clinic_info: clinic_info_data,
+            },
+          });
+          return {
+            userInfo: {
+              ...state.userInfo,
+              clinic_info: clinic_info_data,
+            } as UserInfoType,
+          };
+        });
       }
     }
   },
