@@ -16,7 +16,7 @@ export type NavLinkProp = {
 export const navLinks: NavLinkProp[] = [
   {
     label: "Profile Info",
-    link: "/(tabs)/profile-settings/braces-duration",
+    link: "/(tabs)/profile-settings/profile-info",
     type: "secondary",
     icon: <Ionicons name="person" color={Colors.$iconNeutral} size={18} />,
   },
