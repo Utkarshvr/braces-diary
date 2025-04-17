@@ -1,18 +1,21 @@
-import { Button, Colors, Text, View } from "react-native-ui-lib";
-import { supabase } from "@/lib/supabase";
+import { Colors, Text, View } from "react-native-ui-lib";
 import ClinicCard from "@/components/ui/ClinicCard";
 import NextAppointmentCard from "@/components/ui/NextAppointmentCard";
 import NavLink from "@/components/ui/NavLink";
 import { Ionicons } from "@expo/vector-icons";
+import { useSessionStore } from "@/store/SessionStore";
 
 export default function HomeScreen() {
-  const user_name = "Utkarsh";
+  const { userInfo } = useSessionStore();
+  const user_name = userInfo?.name;
 
   return (
     <View gap-s5 flex bg-$backgroundDefault padding-16>
-      <Text $textDefault montSemiBold font-2xl>
-        Hey {user_name}
-      </Text>
+      {user_name && (
+        <Text $textDefault montSemiBold font-2xl>
+          Hey {user_name}
+        </Text>
+      )}
 
       {/* <ProgressBar/> */}
 
@@ -29,8 +32,6 @@ export default function HomeScreen() {
         // TODO: Change link
         link="/timeline"
       />
-
-      {/* <Button onPress={() => supabase.auth.signOut()} label="Signout" /> */}
     </View>
   );
 }
