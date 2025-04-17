@@ -7,8 +7,14 @@ export default function AuthHandler() {
   // Supabase Login
   const segments = useSegments();
 
-  const { isInitializing, getSession, session, setSession, setIsInitializing } =
-    useSessionStore();
+  const {
+    isInitializing,
+    getSession,
+    session,
+    setSession,
+    setIsInitializing,
+    setUserInfo,
+  } = useSessionStore();
 
   useEffect(() => {
     getSession();
@@ -35,8 +41,12 @@ export default function AuthHandler() {
           .select("*")
           .eq("id", session.user.id)
           .single();
+
         // If user info is present
         if (data) {
+          console.log({ data });
+          setUserInfo(data);
+
           // Check whether it has "name"
           if (data.name) {
             // Let it go, all good
