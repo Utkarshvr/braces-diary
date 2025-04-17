@@ -9,9 +9,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native-ui-lib";
-import { useState } from "react";
-import { KeyboardTypeOptions, ViewStyle } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  KeyboardTypeOptions,
+  ViewStyle,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "@/lib/supabase";
+import { useSessionStore } from "@/store/SessionStore";
+import { UserInfoType } from "@/types/supabase-table-types";
 
 type Props = {};
 
@@ -28,14 +35,12 @@ export default function ClinicInfoForm({}: Props) {
     doctorName: string;
     clinicName: string;
     address: string;
-    emails: string[];
     phones: { name: string; number: string; key: string }[];
     notes: string;
   }>({
     doctorName: "",
     clinicName: "",
     address: "",
-    emails: [""],
     phones: [],
     notes: "",
   });
@@ -140,6 +145,40 @@ export default function ClinicInfoForm({}: Props) {
     setFormData((prev) => ({ ...prev, phones: newPhones }));
   }
 
+  const { userInfo, setUserInfo } = useSessionStore();
+  const [isSavingInfo, setIsSavingInfo] = useState(false);
+
+  async function saveInfo() {
+    setIsSavingInfo(true);
+
+    const newClinicInfo = {
+      user_id: userInfo?.id,
+
+      // clinic-info
+      doctor_name: formData.doctorName,
+      clinic_name: formData.clinicName,
+      address: formData.address,
+      notes: formData.notes,
+      phones: formData.phones,
+    };
+    const { error } = await supabase.from("clinic-info").upsert(newClinicInfo);
+    setUserInfo({ ...userInfo, clinic_info: newClinicInfo } as UserInfoType);
+
+    if (error) return console.log(error);
+
+    setIsSavingInfo(false);
+  }
+
+  useEffect(() => {
+    setFormData({
+      doctorName: userInfo?.clinic_info?.doctor_name || "",
+      clinicName: userInfo?.clinic_info?.clinic_name || "",
+      address: userInfo?.clinic_info?.address || "",
+      notes: userInfo?.clinic_info?.notes || "",
+      phones: userInfo?.clinic_info?.phones || [],
+    });
+  }, []);
+
   return (
     <KeyboardAwareScrollView>
       {inputFields.map((field) => (
@@ -214,6 +253,21 @@ export default function ClinicInfoForm({}: Props) {
           />
         </View>
       </View>
+
+      <Button
+        marginT-16
+        label={isSavingInfo ? "" : "Save"}
+        size="medium"
+        bg-$backgroundNeutralMedium
+        color={Colors.$textNeutral}
+        onPress={saveInfo}
+        // disabled={!isDurationDifferent}
+        disabledBackgroundColor={Colors.$backgroundNeutral}
+      >
+        {isSavingInfo && (
+          <ActivityIndicator size={"small"} color={Colors.$textNeutral} />
+        )}
+      </Button>
 
       <Dialog
         overlayBackgroundColor={"rgba(0,0,0,0.7)"}

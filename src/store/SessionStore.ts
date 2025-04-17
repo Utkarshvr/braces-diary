@@ -25,10 +25,29 @@ export const useSessionStore = create<SessionState>()((set) => ({
   setIsInitializing: (condition: boolean) =>
     set((state) => ({ isInitializing: condition })),
 
-  getSession: () => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      set({ session });
-    });
+  getSession: async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    set({ session });
+
+    if (session?.user) {
+      const { data: clinic_info_data } = await supabase
+        .from("clinic-info")
+        .select("*")
+        .eq("user_id", session?.user.id)
+        .single();
+      console.log({ clinic_info_data });
+
+      if (clinic_info_data) {
+        set((state) => ({
+          userInfo: {
+            ...state.userInfo,
+            clinic_info: clinic_info_data,
+          } as UserInfoType,
+        }));
+      }
+    }
   },
 
   userInfo: null,
